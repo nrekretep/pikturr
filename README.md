@@ -17,7 +17,15 @@ It's as simple as that.
 
 # How? #
 
-For now: get the code, look inside and you'll find out.
+Because pikturr makes use of node-plantuml, which in turn makes use of...ehhh...[plantuml](http://plantuml.com/),
+you have to fulfill some preconditions:
+* you need to have the [java](https://www.java.com) executable in your path
+* you must have [graphviz](http://www.graphviz.org/) installed
+* the GRAPHVIZ_DOT environment variable must point the dot executable of graphviz
+
+That's it for now.
+
+Just get the code, look inside and you'll find out.
 
 ```
 cd pikturr
