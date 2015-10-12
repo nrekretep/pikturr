@@ -8,6 +8,11 @@ function plant_writeStartUml()
     return '@startuml\n\n';
 }
 
+function plant_writeTitle(apiTree, pc)
+{
+    return pc + 'title ' + apiTree.title + ' - Version ' + apiTree.version + '\n\n';
+}
+
 function plant_writeEndUml(pc)
 {
     return pc + '@enduml\n';
@@ -81,6 +86,7 @@ function extractApiData(api, cb){
     var ressourceTree = {};
     ressourceTree.ressources = {};
     ressourceTree.title = api.info.title;
+    ressourceTree.version = api.info.version;
 
     for(var p in api.paths) {
         if(api.paths.hasOwnProperty(p)){
@@ -177,12 +183,26 @@ function plant_writeSkinParams(pc){
     return s;
 }
 
+function plant_writeLegend(apiTree, pc) {
+    var s = pc;
+    var d = new Date();
+    d.setHours(d.getHours()+ 2);
+    s += 'legend left\n';
+    s += 'created with pikturr (https://github.com/nrekretep/pikturr)\n';
+    s += d.toISOString() + '\n';
+    s += 'endlegend\n\n';
+
+    return s;
+}
+
 function convertToPlantUml(apiData) {
     var s = plant_writeStartUml();
+    s = plant_writeTitle(apiData, s);
     s = plant_writeSkinParams(s);
     s = plant_writeApiClass(apiData, s);
     s = plant_writeRessourceClasses(apiData, s);
     s = plant_writeRepresentationClasses(apiData, s);
+    s = plant_writeLegend(apiData, s);
     s = plant_writeEndUml(s);
 
     var gen = plantuml.generate(s, {format: 'png'});
