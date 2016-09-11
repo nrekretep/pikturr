@@ -25,7 +25,7 @@ function plant_writeRessourceClasses(apiTree, pc) {
 
     for(var r in ressourceTree.ressources){
         if(ressourceTree.ressources.hasOwnProperty(r)) {
-            s = plant_writeRessourceClass(r, apiTree.title, ressourceTree.ressources[r], s);
+            s = plant_writeRessourceClass(ressourceTree.ressources[r].class_name, apiTree.title, ressourceTree.ressources[r], s);
         }
     }
 
@@ -60,9 +60,9 @@ function plant_writeRessourceClass(ressource, parent, subRessources, pc){
     s = s + '"' + parent + '" --> "' + ressource + '"\n\n';
 
     for(var r in subRessources){
-        if(r == 'http_verbs')continue;
+        if(r == 'http_verbs' || r == 'class_name')continue;
         if(subRessources.hasOwnProperty(r)) {
-            s = plant_writeRessourceClass(r, ressource, subRessources[r], s);
+            s = plant_writeRessourceClass(subRessources[r].class_name, ressource, subRessources[r], s);
         }
     }
 
@@ -104,12 +104,14 @@ function extractApiData(api, cb){
                     if(!pathSegments.hasOwnProperty(r)) continue;
 
                     var prop = pathSegments[r];
+
                     if (root[prop] == undefined) {
                         root[prop] = {};
                     }
 
                     root = root[prop];
                 }
+                root.class_name = p.substr(1);
                 root.http_verbs = {};
 
                 for(var v in valid_http_verbs) {
@@ -185,25 +187,32 @@ function plant_writeSkinParams(pc){
 
 function plant_writeLegend(apiTree, pc) {
     var s = pc;
-    var d = new Date();
-    d.setHours(d.getHours()+ 2);
     s += 'legend left\n';
     s += 'created with pikturr (https://github.com/nrekretep/pikturr)\n';
-    s += d.toISOString() + '\n';
+    s += new Date().toISOString() + '\n';
     s += 'endlegend\n\n';
 
     return s;
 }
 
+function plant_writeNamespaceHandling(pc) {
+    var s = pc;
+    s += 'set NamespaceSeparator /\n\n';
+
+    return s;
+}
 function convertToPlantUml(apiData) {
     var s = plant_writeStartUml();
+    s = plant_writeNamespaceHandling(s);
     s = plant_writeTitle(apiData, s);
     s = plant_writeSkinParams(s);
     s = plant_writeApiClass(apiData, s);
     s = plant_writeRessourceClasses(apiData, s);
-    s = plant_writeRepresentationClasses(apiData, s);
+    //s = plant_writeRepresentationClasses(apiData, s);
     s = plant_writeLegend(apiData, s);
     s = plant_writeEndUml(s);
+
+    console.log(s);
 
     var gen = plantuml.generate(s, {format: 'png'});
     gen.out.pipe(fs.createWriteStream('output-file.png'));
