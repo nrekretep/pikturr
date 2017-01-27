@@ -13,7 +13,7 @@
   "license": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "test": "node index.js 'http://petstore.swagger.io/v2/swagger.yaml'"
   },
   "dependencies": {
     "node-plantuml": "^0.4.2",
