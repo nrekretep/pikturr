@@ -27,12 +27,20 @@ That's it for now.
 
 Just get the code, look inside and you'll find out.
 
+From the command line:
+
 ```
 cd pikturr
 npm install
- // modifiy the url in app.js to point to your swagger spec
-node ./app.js
+// supply the url of the swagger as an argument
+node index.js 'http://petstore.swagger.io/v2/swagger.yaml'
+```
 
+As a module:
+
+```
+const pikturr = require(pikturr)
+pikturr.generate('http://petstore.swagger.io/v2/swagger.yaml')
 ```
 
 ![class diagram for the pet store api](./output-file.png)
