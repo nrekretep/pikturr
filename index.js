@@ -6,7 +6,11 @@
     const SwaggerParser = require('swagger-parser')
     const swaggerParser = new SwaggerParser()
     const plantuml = require('node-plantuml')
+    const urlLib  = require('url')
+    const path = require('path')
 
+    var swaggerUrlStr   = "" // will be filled up by code at the end of this function
+    var outfileFileName = "" // either swaggerFileName + .png, or specified by an arg
 
     const internals = {}
 
@@ -209,7 +213,8 @@
         s = internals.plant_writeEndUml(s);
 
         var gen = plantuml.generate(s, { format: 'png' });
-        gen.out.pipe(fs.createWriteStream('output-file.png'));
+
+        gen.out.pipe(fs.createWriteStream(outfileFileName));
     }
 
 
@@ -223,7 +228,18 @@
     }
 
     if (!module.parent) {
-        pikturr.generate(process.argv[2]);
+        swaggerUrlStr  = process.argv[2]
+
+        // Let's get the leaf file name without extension from the url arg
+        var swaggerURL         = urlLib.parse(swaggerUrlStr)
+        var swaggerPath        = swaggerURL.pathname
+        var swaggerFileWithExt = path.parse(swaggerPath).base
+        var swaggerFileName    = swaggerFileWithExt.replace(/\..+$/, '');
+
+        // to be used by internals.convertToPlantUml
+        outfileFileName = swaggerFileName + '.png'
+
+        pikturr.generate(swaggerUrlStr);
     }
 
 })();
