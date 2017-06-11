@@ -18,7 +18,9 @@
   "dependencies": {
     "node-plantuml": "^0.4.2",
     "swagger-parser": "^3.3.0",
-    "path": "0.12.7"
+    "path": "^0.12.7",
+    "minimist": "^1.2.0",
+    "mkdirp": "^0.5.1"
   },
   "devDependencies": {}
 }

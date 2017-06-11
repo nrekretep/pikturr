@@ -8,9 +8,29 @@
     const plantuml = require('node-plantuml')
     const urlLib  = require('url')
     const path = require('path')
+    const mkdirp = require('mkdirp');
+
+    const parseArgs = require('minimist')
+
+    // There seems to be no unique extension for plantuml file that the community aggreed on
+    // Some use the short ".pu", other the descriptive ".plantuml", and I have seen a case of ".puml"
+    // If people aggree, a different default could be used, or it could be specified in the --uml flag
+    const umlExtension = ".plantuml"
 
     var swaggerUrlStr   = "" // will be filled up by code at the end of this function
     var outfileFileName = "" // either swaggerFileName + .png, or specified by an arg
+    var formatAsPlantUml = false // output plantuml data or png diagram
+
+    // to get a printf like function in javascript you need to add it yourself!
+    const str = {}
+    str.format = function() {
+        var s = arguments[0];
+        for (var i = 0; i < arguments.length - 1; i += 1) {
+            var reg = new RegExp('\\{' + i + '\\}', 'gm');
+            s = s.replace(reg, arguments[i + 1]);
+        }
+        return s;
+    };
 
     const internals = {}
 
@@ -212,11 +232,41 @@
         s = internals.plant_writeLegend(apiData, s);
         s = internals.plant_writeEndUml(s);
 
+        if (formatAsPlantUml) {
+            // write the plantuml syntax in the s string to the output file
+
+            fs.writeFile(outfileFileName, s, function(err) {
+                if(err) {
+                    return console.log(err);
+                }
+                console.log(str.format("Saved uml specification into file: {0}.",outfileFileName));
+            });
+
+            return
+        }
+
+        // generate the png diagram, and store it in the output file
+
         var gen = plantuml.generate(s, { format: 'png' });
 
         gen.out.pipe(fs.createWriteStream(outfileFileName));
+        console.log(str.format("Saved png diagram into file: {0}.",outfileFileName));
     }
 
+    // runs a mkdir -p command to create all directories in the output file path
+    // if any directories do not exists
+    internals.ensureOutputPath = function (filePath) {
+        var outPath = path.parse(filePath).dir
+        mkdirp(outPath, function(err) {
+            if (err) {
+                if (err.code != 'EEXIST') {
+                    console.log(str.format("Failed to create output path: {0}; {1}.", outPath, err));
+                    process.exit(2)
+                }
+            }
+            // successfully created path
+        });
+    }
 
     var pikturr = {};
     exports.generate = pikturr.generate = function (url) {
@@ -227,17 +277,63 @@
         })
     }
 
+    var options = {}
+    // Set variables based on options provided on the command line
+    // -o | --output filePath:
+    //              path or file name of the output file
+    //              default is leaf file name in the url argument
+    // -u | --uml: output plant uml script in output file
+    //             default is to output png diagram
+    options.processOptions = function() {
+
+        var optionsConfig = {boolean: ["u", "uml"]}
+        var argv = parseArgs(process.argv.slice(2), optionsConfig)
+
+        // console.log('argv: ', argv);
+        // console.log("num = ", argv._.length)
+
+        if (argv._.length < 1) {
+            console.log("Last argument must be the path or url of the swagger file to read.")
+            process.exit(1)
+        }
+
+        // pick up last arg; the url/path of file to read
+        swaggerUrlStr =  argv._[argv._.length - 1]
+        // console.log('swaggerUrlStr: ', swaggerUrlStr);
+
+
+        if (("o" in argv) && (argv.o != "")) {
+            outfileFileName = argv.o
+        } else if (("output" in argv) && (argv.output != "")) {
+            outfileFileName = argv.output
+        }
+
+        if ((("u" in argv) && argv.u) || (("uml" in argv) && argv.uml)) {
+            formatAsPlantUml = true
+        }
+    }
+
     if (!module.parent) {
-        swaggerUrlStr  = process.argv[2]
+        // sets: swaggerUrlStr, and optionally outfileFileName
+        options.processOptions()
 
-        // Let's get the leaf file name without extension from the url arg
-        var swaggerURL         = urlLib.parse(swaggerUrlStr)
-        var swaggerPath        = swaggerURL.pathname
-        var swaggerFileWithExt = path.parse(swaggerPath).base
-        var swaggerFileName    = swaggerFileWithExt.replace(/\..+$/, '');
+        if (outfileFileName == "") {
+            // the default output file is the url leaf name + ".png" or ".plantuml"
+            var swaggerURL         = urlLib.parse(swaggerUrlStr)
+            var swaggerPath        = swaggerURL.pathname
+            // leaf name without extension
+            var swaggerFileName    = path.parse(swaggerPath).name
 
-        // to be used by internals.convertToPlantUml
-        outfileFileName = swaggerFileName + '.png'
+            // outfileFileName to be used by internals.convertToPlantUml
+            if (formatAsPlantUml) {
+                outfileFileName = swaggerFileName + umlExtension
+            } else {
+                outfileFileName = swaggerFileName + '.png'
+            }
+        }
+
+        // ensure all dir in outfileFileName exists
+        internals.ensureOutputPath(outfileFileName)
 
         pikturr.generate(swaggerUrlStr);
     }
