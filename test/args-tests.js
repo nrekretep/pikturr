@@ -160,7 +160,7 @@ var genPngFile = function () {
     // The path of the file where uml will be written to (derived from specRef here)
     var outFile = testTempDir + "/petstore.png"
 
-    var prc = spawnSync('node', ['index.js', '-o', outFile, specRef])
+    var prc = spawnSync('node', ['index.js', '--output', outFile, specRef])
 //    console.log("prc.status = " + prc.status)
 //    console.log("prc.signal = " + prc.signal)
 //    console.log("prc.error = " + prc.error)
@@ -199,7 +199,7 @@ var genUmlFileDeepDir = function () {
     // The path of the file where uml will be written to (derived from specRef here)
     var outFile = testTempDir + "/dir1/dir2/dir3/api-specs.plantuml"
 
-    var prc = spawnSync('node', ['index.js', '--uml', '-o', outFile, specRef])
+    var prc = spawnSync('node', ['index.js', '-u', '-o', outFile, specRef])
 //    console.log("prc.status = " + prc.status)
 //    console.log("prc.signal = " + prc.signal)
 //    console.log("prc.error = " + prc.error)
