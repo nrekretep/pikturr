@@ -2,3 +2,9 @@ node_modules
 *.png
 !output-file.png
 .DS_Store
+
+# test artifacts
+test/tmp
+
+# generated in the top dir during a test
+my-app-swagger.plantuml

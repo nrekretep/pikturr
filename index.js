@@ -12,13 +12,13 @@
 
     const parseArgs = require('minimist')
 
-    // There seems to be no unique extension for plantuml file that the community aggreed on
+    // There seems to be no unique extension for plantuml file that the community agrees on
     // Some use the short ".pu", other the descriptive ".plantuml", and I have seen a case of ".puml"
-    // If people aggree, a different default could be used, or it could be specified in the --uml flag
+    // If people request otherwise, a different default could be used, or it could be specified in the --uml flag
     const umlExtension = ".plantuml"
 
     var swaggerUrlStr   = "" // will be filled up by code at the end of this function
-    var outfileFileName = "" // either swaggerFileName + .png, or specified by an arg
+    var outfileFileName = "" // either swaggerFileName + .png, or specified by the --output arg
     var formatAsPlantUml = false // output plantuml data or png diagram
 
     // to get a printf like function in javascript you need to add it yourself!
@@ -237,7 +237,7 @@
 
             fs.writeFile(outfileFileName, s, function(err) {
                 if(err) {
-                    return console.log(err);
+                    return console.error(err);
                 }
                 console.log(str.format("Saved uml specification into file: {0}.",outfileFileName));
             });
@@ -253,19 +253,20 @@
         console.log(str.format("Saved png diagram into file: {0}.",outfileFileName));
     }
 
-    // runs a mkdir -p command to create all directories in the output file path
-    // if any directories do not exists
+    // runs the equivalent to the "mkdir -p" command to create all directories in the output file path
+    // if any of them is missing
     internals.ensureOutputPath = function (filePath) {
         var outPath = path.parse(filePath).dir
-        mkdirp(outPath, function(err) {
-            if (err) {
-                if (err.code != 'EEXIST') {
-                    console.log(str.format("Failed to create output path: {0}; {1}.", outPath, err));
+
+        try {
+            mkdirp.sync(outPath)
+        }
+        catch (err) {
+                if (err.code != 'EEXIST' || ! fs.lstatSync(outPath).isDirectory() ) {
+                    console.error(str.format("Failed to create output path: {0}; {1}.", outPath, err));
                     process.exit(2)
                 }
-            }
-            // successfully created path
-        });
+        }
     }
 
     var pikturr = {};
@@ -273,7 +274,7 @@
         swaggerParser.parse(url).then(function (api) {
             internals.extractApiData(api, internals.convertToPlantUml);
         }).catch(function (err) {
-            console.log(err);
+            console.error(err);
         })
     }
 
@@ -289,18 +290,13 @@
         var optionsConfig = {boolean: ["u", "uml"]}
         var argv = parseArgs(process.argv.slice(2), optionsConfig)
 
-        // console.log('argv: ', argv);
-        // console.log("num = ", argv._.length)
-
         if (argv._.length < 1) {
-            console.log("Last argument must be the path or url of the swagger file to read.")
+            console.error("Last argument must be the path or url of the swagger file to read.")
             process.exit(1)
         }
 
         // pick up last arg; the url/path of file to read
         swaggerUrlStr =  argv._[argv._.length - 1]
-        // console.log('swaggerUrlStr: ', swaggerUrlStr);
-
 
         if (("o" in argv) && (argv.o != "")) {
             outfileFileName = argv.o
