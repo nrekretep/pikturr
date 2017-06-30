@@ -24,5 +24,13 @@
     "path": "^0.12.7",
     "swagger-parser": "^3.3.0"
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nrekretep/pikturr.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nrekretep/pikturr/issues"
+  },
+  "homepage": "https://github.com/nrekretep/pikturr#readme"
 }
