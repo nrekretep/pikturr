@@ -22,14 +22,14 @@
         return pc + '@enduml\n';
     }
 
-    internals.plant_writeRessourceClasses = function (apiTree, pc) {
+    internals.plant_writeResourceClasses = function (apiTree, pc) {
 
         var s = pc;
-        var ressourceTree = apiTree;
+        var resourceTree = apiTree;
 
-        for (var r in ressourceTree.ressources) {
-            if (ressourceTree.ressources.hasOwnProperty(r)) {
-                s = internals.plant_writeRessourceClass(r, apiTree.title, ressourceTree.ressources[r], s);
+        for (var r in resourceTree.resources) {
+            if (resourceTree.resources.hasOwnProperty(r)) {
+                s = internals.plant_writeResourceClass(r, apiTree.title, resourceTree.resources[r], s);
             }
         }
 
@@ -37,19 +37,19 @@
 
     }
 
-    internals.plant_writeRessourceClass = function (ressource, parent, subRessources, pc) {
+    internals.plant_writeResourceClass = function (resource, parent, subResources, pc) {
         var s = pc;
-        s = s + 'class "' + ressource + '" <<ressource>> {\n';
+        s = s + 'class "' + resource + '" <<resource>> {\n';
         // add http_verbs as methods
         s = s + '__ http __\n';
-        for (var v in subRessources.http_verbs) {
+        for (var v in subResources.http_verbs) {
 
-            if (!subRessources.http_verbs.hasOwnProperty(v)) continue;
+            if (!subResources.http_verbs.hasOwnProperty(v)) continue;
 
             s = s + v + '(';
-            for (var param in subRessources.http_verbs[v].params) {
+            for (var param in subResources.http_verbs[v].params) {
 
-                if (!subRessources.http_verbs[v].params.hasOwnProperty(param)) continue;
+                if (!subResources.http_verbs[v].params.hasOwnProperty(param)) continue;
 
                 s = s + param + ',';
             }
@@ -61,12 +61,12 @@
 
         // end of class
         s = s + '}\n\n';
-        s = s + '"' + parent + '" --> "' + ressource + '"\n\n';
+        s = s + '"' + parent + '" --> "' + resource + '"\n\n';
 
-        for (var r in subRessources) {
+        for (var r in subResources) {
             if (r == 'http_verbs') continue;
-            if (subRessources.hasOwnProperty(r)) {
-                s = internals.plant_writeRessourceClass(r, ressource, subRessources[r], s);
+            if (subResources.hasOwnProperty(r)) {
+                s = internals.plant_writeResourceClass(r, resource, subResources[r], s);
             }
         }
 
@@ -87,10 +87,10 @@
     internals.extractApiData = function (api, cb) {
 
         var valid_http_verbs = ['get', 'put', 'post', 'delete', 'head', 'options', 'patch'];
-        var ressourceTree = {};
-        ressourceTree.ressources = {};
-        ressourceTree.title = api.info.title;
-        ressourceTree.version = api.info.version;
+        var resourceTree = {};
+        resourceTree.resources = {};
+        resourceTree.title = api.info.title;
+        resourceTree.version = api.info.version;
 
         for (var p in api.paths) {
             if (api.paths.hasOwnProperty(p)) {
@@ -102,7 +102,7 @@
                     // Leere Elemente entfernen
                     pathSegments = pathSegments.filter(function (n) { return n != '' });
 
-                    var root = ressourceTree.ressources;
+                    var root = resourceTree.resources;
 
                     for (var r in pathSegments) {
                         if (!pathSegments.hasOwnProperty(r)) continue;
@@ -135,20 +135,20 @@
             }
         }
 
-        ressourceTree.definitions = {};
+        resourceTree.definitions = {};
         for (var d in api.definitions) {
             if (!api.definitions.hasOwnProperty(d)) continue;
 
-            ressourceTree.definitions[d] = {};
+            resourceTree.definitions[d] = {};
             for (p in api.definitions[d].properties) {
 
                 if (!api.definitions[d].properties.hasOwnProperty(p)) continue;
 
-                ressourceTree.definitions[d][p] = {};
+                resourceTree.definitions[d][p] = {};
             }
         }
 
-        cb(ressourceTree);
+        cb(resourceTree);
     }
 
     internals.plant_writeRepresentationClasses = function (apiData, pc) {
@@ -175,12 +175,12 @@
 
         s = s + 'skinparam stereotypeCBackgroundColor<<representation>> DimGray\n';
         s = s + 'skinparam stereotypeCBackgroundColor<<api>> Red\n';
-        s = s + 'skinparam stereotypeCBackgroundColor<<ressource>> SpringGreen\n';
+        s = s + 'skinparam stereotypeCBackgroundColor<<resource>> SpringGreen\n';
 
         s = s + 'skinparam class {\n';
         s = s + 'BackgroundColor<<api>> Yellow\n';
         s = s + 'BackgroundColor<<representation>> Silver\n';
-        s = s + 'BackgroundColor<<ressource>> YellowGreen\n';
+        s = s + 'BackgroundColor<<resource>> YellowGreen\n';
         s = s + '}\n\n';
 
         return s;
@@ -203,7 +203,7 @@
         s = internals.plant_writeTitle(apiData, s);
         s = internals.plant_writeSkinParams(s);
         s = internals.plant_writeApiClass(apiData, s);
-        s = internals.plant_writeRessourceClasses(apiData, s);
+        s = internals.plant_writeResourceClasses(apiData, s);
         s = internals.plant_writeRepresentationClasses(apiData, s);
         s = internals.plant_writeLegend(apiData, s);
         s = internals.plant_writeEndUml(s);
