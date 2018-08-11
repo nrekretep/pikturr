@@ -1,6 +1,6 @@
 {
   "name": "pikturr",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "description": "Simple program to visualize a swagger api spec as an uml class diagram.",
   "keywords": [
@@ -13,9 +13,14 @@
   "license": "",
   "main": "index.js",
   "scripts": {
-    "test": "node index.js 'http://petstore.swagger.io/v2/swagger.yaml'"
+    "test": "./node_modules/.bin/mocha --reporter spec"
   },
   "dependencies": {
+    "chai": "^4.0.2",
+    "minimist": "^1.2.0",
+    "mkdirp": "^0.5.1",
+    "mocha": "^3.4.2",
+    "path": "^0.12.7",
     "ansi-regex": "^2.1.1",
     "ansi-styles": "^3.0.0",
     "argparse": "^1.0.9",

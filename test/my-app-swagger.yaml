@@ -1,0 +1,128 @@
+swagger: '2.0'
+info:
+  description: >-
+    Test swagger file to be used in the test suite of pikturr.
+    Do not expect any meaningful structure.
+  title: MyApp API
+  version: 1.0.0
+consumes:
+  - application/json
+produces:
+  - application/json
+basePath: /my-app/v1
+paths:
+  /config:
+    get:
+      description: Returns MyApp configuration
+      tags:
+        - config
+      produces:
+        - application/json
+      operationId: getConfiguration
+      responses:
+        '200':
+          description: Successfully retrieved the configuration
+          schema:
+            $ref: '#/definitions/Config'
+        '500':
+          description: Failed to retrieve the configuration
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+    post:
+      description: Send and apply a new configuration
+      tags:
+        - config
+      operationId: setConfiguration
+      parameters:
+        - name: body
+          in: body
+          description: The configuration to apply
+          required: true
+          schema:
+            $ref: '#/definitions/Config'
+      responses:
+        '200':
+          description: Successfully sent and applied the configuration
+          schema:
+            $ref: '#/definitions/Config'
+        '400':
+          description: Invalid configuration
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '500':
+          description: Failed to send or apply the configuration
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+definitions:
+  TimingConfig:
+    description: Time related configuration structure
+    type: object
+    properties:
+      timeout:
+        $ref: '#/definitions/Timeout'
+      max-retry:
+        type: integer
+        default: 5
+        minimum: 0
+    required:
+      - timeout
+      - max-retry
+  Timeout:
+    description: Request timeout and time unit.
+    type: object
+    properties:
+      value:
+        type: integer
+        default: 60
+        minimum: 1
+      unit:
+        $ref: '#/definitions/TimeUnits'
+    required:
+      - value
+      - unit
+  TimeUnits:
+    type: string
+    default: second
+    enum:
+      - second
+      - minute
+      - hour
+  PluginConfig:
+    description: Configuration for plugin
+    type: object
+    properties:
+      hosts:
+        type: array
+        items:
+          type: string
+      plugin-name:
+        type: string
+      path:
+        type: string
+    required:
+      - hosts
+      - plugin-name
+      - path
+  Config:
+    description: Configuration structure
+    type: object
+    properties:
+      timing-config:
+        $ref: '#/definitions/TimingConfig'
+      plugin-config:
+        $ref: '#/definitions/PluginConfig'
+      version:
+        description: 'Config object version'
+        type: string
+    required:
+      - timing-config
+      - version
+  ErrorResponse:
+    description: Define a simple response structure to report errors or the request status
+    type: object
+    properties:
+      message:
+        type: string
+      return_code:
+        type: integer
+        format: int64

@@ -36,6 +36,24 @@ npm install
 node index.js 'http://petstore.swagger.io/v2/swagger.yaml'
 ```
 
+Pikturr supports a few command line arguments:  
+`node index.js [-o|--output outputFilePath] [-u|--uml] url-or-filePath`
+
+E.g.  
+* `node index.js -o someDir/petstore-swagger.plantuml --uml http://petstore.swagger.io/v2/swagger.json`  
+  Download the spec at: `http://petstore.swagger.io/v2/swagger.json`  
+  and output uml script in a file named: `someDir/petstore-swagger.plantuml`
+
+* `node index.js test/my-app-swagger.yaml`  
+  Read spec from local file at: `test/my-app-swagger.yaml`  
+  and output png diagram in a file named: `swagger.png`
+  
+If the `-o` or `--output` flag is not passed, the output file will be created in the working directory,
+and will be named from the last token in the input reference.
+   
+If the `-u` or `--uml` flag is passed a plantuml script will be generated,  
+else a png diagram will be generated.
+
 As a module:
 
 ```
@@ -44,6 +62,12 @@ pikturr.generate('http://petstore.swagger.io/v2/swagger.yaml')
 ```
 
 ![class diagram for the pet store api](./output-file.png)
+
+# Running Unit Tests
+To run the test suite issue the following command:  
+`npm test`
+
+Fell free to extend the tests suite.
 
 # What next? #
 
