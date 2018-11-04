@@ -10,7 +10,7 @@
     "plantuml"
   ],
   "author": "Peter Kern",
-  "license": "",
+  "license": "MIT",
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/.bin/mocha --reporter spec"
