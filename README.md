@@ -67,7 +67,7 @@ pikturr.generate('http://petstore.swagger.io/v2/swagger.yaml')
 To run the test suite issue the following command:  
 `npm test`
 
-Fell free to extend the tests suite.
+Feel free to extend the tests suite.
 
 # What next? #
 
