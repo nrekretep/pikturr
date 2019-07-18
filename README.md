@@ -21,7 +21,8 @@ Because pikturr makes use of node-plantuml, which in turn makes use of...ehhh...
 you have to fulfill some preconditions:
 * you need to have the [java](https://www.java.com) executable in your path
 * you must have [graphviz](http://www.graphviz.org/) installed
-* the GRAPHVIZ_DOT environment variable must point the dot executable of graphviz
+* the GRAPHVIZ_DOT environment variable must point the dot executable of graphviz (which is 'dot')
+* (e.g. in Windows, 'GRAPHVIZ_DOT=C:\Program Files (x86)\Graphviz2.38\bin\dot.exe' )
 
 That's it for now.
 
