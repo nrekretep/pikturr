@@ -16,7 +16,7 @@
     "test": "./node_modules/.bin/mocha --reporter spec"
   },
   "dependencies": {
-    "ansi-regex": "^2.1.1",
+    "ansi-regex": "^6.0.1",
     "ansi-styles": "^3.0.0",
     "argparse": "^1.0.9",
     "asn1": "^0.2.3",
