@@ -96,7 +96,7 @@
     "tough-cookie": "^2.3.2",
     "tunnel-agent": "^0.6.0",
     "util-deprecate": "^1.0.2",
-    "validator": "^7.0.0",
+    "validator": "^13.7.0",
     "xtend": "^4.0.1",
     "z-schema": "^3.18.2"
   },
