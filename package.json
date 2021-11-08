@@ -59,7 +59,7 @@
     "js-yaml": "^3.8.4",
     "json-schema-ref-parser": "^3.1.2",
     "json-stringify-safe": "^5.0.1",
-    "jsonpointer": "^4.0.1",
+    "jsonpointer": "^5.0.0",
     "lodash": "^4.17.4",
     "lodash._baseget": "^3.7.2",
     "lodash._topath": "^3.8.1",
