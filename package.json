@@ -91,7 +91,7 @@
     "strip-ansi": "^3.0.1",
     "supports-color": "^3.2.3",
     "swagger-methods": "^1.0.0",
-    "swagger-parser": "^3.4.1",
+    "@apidevtools/swagger-parser": "^10.0.3",
     "swagger-schema-official": "^2.0.0-bab6bed",
     "tough-cookie": "^2.3.2",
     "tunnel-agent": "^0.6.0",

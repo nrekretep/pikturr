@@ -3,7 +3,7 @@
     "use strict";
 
     const fs = require('fs')
-    const SwaggerParser = require('swagger-parser')
+    const SwaggerParser = require("@apidevtools/swagger-parser");
     const swaggerParser = new SwaggerParser()
     const plantuml = require('node-plantuml')
     const urlLib  = require('url')
