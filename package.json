@@ -67,7 +67,7 @@
     "lodash.isarray": "^4.0.0",
     "mime-db": "^1.28.0",
     "mime-types": "^2.1.15",
-    "minimist": "^1.2.0",
+    "minimist": "^1.2.6",
     "mkdirp": "^0.5.1",
     "mocha": "^9.2.0",
     "ms": "^2.0.0",
