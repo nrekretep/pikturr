@@ -81,7 +81,7 @@
     "path": "^0.12.7",
     "plantuml-encoder": "^1.2.4",
     "process-nextick-args": "^1.0.7",
-    "qs": "^6.4.0",
+    "qs": "^6.5.3",
     "readable-stream": "^2.2.9",
     "request": "^2.81.0",
     "sntp": "^2.0.2",
